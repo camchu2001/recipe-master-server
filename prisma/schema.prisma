@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  firstName String    @map("first_name")
+  lastName  String    @map("last_name")
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  User_Recipe User_Recipe[]
+
+  @@map("users")
+}
+
+model Recipe {
+  id           Int       @id @default(autoincrement())
+  name         String    @unique
+  instructions String
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+
+  User_Recipe     User_Recipe[]
+  Recipe_Category Recipe_Category[]
+
+  @@map("recipes")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+
+  Recipe_Category Recipe_Category[]
+
+  @@map("categories")
+}
+
+model User_Recipe {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  recipeId  Int       @map("recipe_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  user   User   @relation(fields: [userId], references: [id])
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  @@map("users_recipes")
+}
+
+model Recipe_Category {
+  id         Int       @id @default(autoincrement())
+  recipeId   Int       @map("recipe_id")
+  categoryId Int       @map("category_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @updatedAt @map("updated_at")
+
+  recipe   Recipe   @relation(fields: [recipeId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@map("recipes_categories")
+}
