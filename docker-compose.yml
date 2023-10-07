@@ -6,7 +6,7 @@ volumes:
 
 services:
   db:
-    image: postgres
+    image: postgres:14-bullseye
     container_name: ${POSTGRES_DB}
     restart: unless-stopped
     volumes:
