@@ -1,19 +1,32 @@
-import { createUser, getUserById } from './users.service';
+import { Response } from 'express';
+import { User } from '@prisma/client';
+import { createUser, getUser } from './users.service';
+import { CreateUserRequest, GetUserRequest } from './users.types';
+import { ResourceError } from '../../errors';
 
-
-export const getUserHandler = async ( req: any, res: any ): Promise<any> => {
+export const getUserHandler = async (
+    req: GetUserRequest,
+    res: Response<ResourceError | User>
+): Promise<Response<ResourceError | User>> => {
     const userId = Number( req.params.userId );
 
-    const getUserByIdResult = await getUserById( userId );
+    const getUserResult = await getUser( userId );
 
-    if ( !getUserByIdResult ) {
-        res.status( 404 ).json( { message: 'User not found' } );
+    if ( getUserResult.isError() ) {
+        return res
+            .status( getUserResult.value.statusCode )
+            .json( getUserResult.value );
     }
 
-    res.status( 200 ).json( getUserByIdResult );
+    return res
+        .status( 200 )
+        .json( getUserResult.value );
 };
 
-export const createUserHandler = async ( req: any, res: any ): Promise<any> => {
+export const createUserHandler = async (
+    req: CreateUserRequest,
+    res:  Response<ResourceError | User>
+): Promise<Response<ResourceError | User>> => {
     const { firstName, lastName, email } = req.body;
 
     const createUserResult = await createUser( {
@@ -22,5 +35,13 @@ export const createUserHandler = async ( req: any, res: any ): Promise<any> => {
         email
     } );
 
-    res.status( 201 ).json( createUserResult );
+    if ( createUserResult.isError() ) {
+        return res
+            .status( createUserResult.value.statusCode )
+            .json( createUserResult.value );
+    }
+
+    return res
+        .status( 201 )
+        .json( createUserResult.value );
 };
