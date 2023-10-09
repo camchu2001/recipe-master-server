@@ -1,16 +1,15 @@
-import {
-    Prisma, PrismaClient, User
-} from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import {
     Either, error, success
 } from '../../types';
 import { UserAlreadyExists, UserNotFound } from './users.error';
 import {
-    DatabaseDuplicateKeyError, DatabaseError, DatabaseResourceNotFoundError
-} from '../../prisma/prisma.errors';
-import { createDatabaseError } from '../../prisma/prisma.helper';
-
-const prisma = new PrismaClient();
+    DatabaseDuplicateKeyError,
+    DatabaseError,
+    DatabaseResourceNotFoundError,
+    createDatabaseError,
+    prismaClient
+} from '../../prisma';
 
 export const getUser = async (
     userId: User['id']
@@ -18,7 +17,7 @@ export const getUser = async (
     let user: User;
 
     try {
-        user = await prisma.user.findUniqueOrThrow( { where: { id: userId } } );
+        user = await prismaClient.user.findUniqueOrThrow( { where: { id: userId } } );
     } catch ( err ) {
         const databaseError = createDatabaseError( err );
 
@@ -38,7 +37,7 @@ export const createUser = async (
     let newUser: User;
 
     try {
-        newUser = await prisma.user.create( { data: user } );
+        newUser = await prismaClient.user.create( { data: user } );
     } catch ( err ) {
         const databaseError = createDatabaseError( err );
 
