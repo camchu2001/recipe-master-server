@@ -54,7 +54,7 @@ describe( 'GET /users/:userId', () => {
                 const getUserSpy = jest.spyOn( UserServiceModule, 'getUser' );
 
                 const result = await request
-                    .get( `/users/${ -1 }` );
+                    .get( '/users/-1' );
 
                 expect( getUserSpy ).toHaveBeenCalledTimes( 1 );
                 expect( getUserSpy ).toHaveBeenCalledWith( -1 );
