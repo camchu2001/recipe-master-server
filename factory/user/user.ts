@@ -1,5 +1,5 @@
 import { User } from '@prisma/client';
-import { generateRandomInteger } from '../../utils';
+import { generateRandomInteger, generateRandomString } from '../../utils';
 import {
     DatabaseError, createDatabaseError, prismaClient
 } from '../../prisma';
@@ -11,7 +11,7 @@ export const createUser = async ( {
     id = generateRandomInteger(),
     firstName = 'Bunny',
     lastName = 'Rabbit',
-    email = 'bunnyrabbit@gmail.com',
+    email = generateRandomString() + 'gmail.com',
     createdAt = new Date(),
     updatedAt = null
 }: Partial<User> ): Promise<Either<DatabaseError, User>> => {

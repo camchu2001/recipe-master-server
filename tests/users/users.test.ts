@@ -50,25 +50,14 @@ describe( 'GET /users/:userId', () => {
 
     describe( 'GET /users/:userId fail flow', () => {
         describe( 'user with the provided id does not exist', () => {
-            let user: User;
-
-            beforeAll( async () => {
-                const factory = new Factory();
-                user = await factory.getUser( {
-                    firstName: 'Abigail',
-                    lastName: 'Amber',
-                    email: generateRandomString() + 'gmail.com'
-                } );
-            } );
-
             it( 'returns error user not found', async () => {
                 const getUserSpy = jest.spyOn( UserServiceModule, 'getUser' );
 
                 const result = await request
-                    .get( `/users/${ user.id + 1 }` );
+                    .get( `/users/${ -1 }` );
 
                 expect( getUserSpy ).toHaveBeenCalledTimes( 1 );
-                expect( getUserSpy ).toHaveBeenCalledWith( user.id + 1 );
+                expect( getUserSpy ).toHaveBeenCalledWith( -1 );
 
                 expect( result.status ).toBe( 404 );
                 expect( result.body ).toStrictEqual( {
