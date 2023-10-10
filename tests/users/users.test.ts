@@ -69,3 +69,83 @@ describe( 'GET /users/:userId', () => {
         } );
     } );
 } );
+
+
+describe( 'POST /users', () => {
+    describe( 'POST /users success flow', () => {
+        it( 'returns the newly created user', async () => {
+            const userInput = {
+                firstName: 'Hello',
+                lastName: 'World',
+                email: generateRandomString() + '@gmail.com',
+                createdAt: new Date(),
+                updatedAt: null
+            };
+
+            const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
+
+            const result = await request
+                .post( '/users' )
+                .send( userInput );
+
+            expect( createUserSpy ).toHaveBeenCalledTimes( 1 );
+            expect( createUserSpy ).toHaveBeenCalledWith(
+                {
+                    firstName: userInput.firstName,
+                    lastName: userInput.lastName,
+                    email: userInput.email
+                }
+            );
+
+            expect( result.status ).toBe( 201 );
+            expect( result.body ).toStrictEqual(
+                expect.objectContaining(
+                    {
+                        firstName: userInput.firstName,
+                        lastName: userInput.lastName,
+                        email: userInput.email
+                    }
+                )
+            );
+        } );
+    } );
+
+    describe( 'POST /users fail flow', () => {
+        describe( 'user has already exist', () => {
+            let user: User;
+
+            beforeAll( async () => {
+                const factory = new Factory();
+                user = await factory.getUser( {
+                    firstName: 'Abigail',
+                    lastName: 'Abigail',
+                    email: generateRandomString() + '@gmail.com'
+                } );
+            } );
+
+            it( 'returns error user already exists', async () => {
+                const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
+
+                const result = await request
+                    .post( '/users' )
+                    .send( user );
+
+                expect( createUserSpy ).toHaveBeenCalledTimes( 1 );
+                expect( createUserSpy ).toHaveBeenCalledWith(
+                    {
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email
+                    }
+                );
+
+                expect( result.status ).toBe( 400 );
+                expect( result.body ).toStrictEqual( {
+                    message: 'This user has already exists.',
+                    code: 'USER_ALREADY_EXISTS',
+                    statusCode: 400
+                } );
+            } );
+        } );
+    } );
+} );
