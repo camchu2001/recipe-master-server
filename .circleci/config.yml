@@ -45,6 +45,8 @@ jobs:
           name: Drop Temporary Database
           command: npm run temp-database-down
           when: always
+      - store_artifacts:
+          path: jest/coverage/integrationTests
 
 # Orchestrate our job run sequence
 workflows:
