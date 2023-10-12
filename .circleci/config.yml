@@ -3,12 +3,12 @@ version: 2.1
 # Define the jobs we want to run for this project
 jobs:
   integration-tests:
-    machine: # To successfully run docker-compose in our pipeline, we need to use the machine executor
+    machine:
       image: ubuntu-2004:current
       docker_layer_caching: true
     resource_class: medium
     steps:
-     - run:
+      - run:
           name: Install nvm
           command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
       - run:
@@ -29,7 +29,6 @@ jobs:
             echo "POSTGRES_PORT=$POSTGRES_PORT" >> .env
             echo "POSTGRES_USER=$POSTGRES_USER" >> .env
             echo "DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public" >> .env
-
             cat .env
       - run:
           name: Create Empty Temporary Database & Docker Compose
