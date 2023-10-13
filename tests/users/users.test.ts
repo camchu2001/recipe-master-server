@@ -123,7 +123,7 @@ describe( 'POST /users', () => {
                 } );
             } );
 
-            it( 'returns error user already exists', async () => {
+            it( 'returns error user already existed', async () => {
                 const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
 
                 const result = await request
@@ -141,7 +141,7 @@ describe( 'POST /users', () => {
 
                 expect( result.status ).toBe( 400 );
                 expect( result.body ).toStrictEqual( {
-                    message: 'This user has already exists.',
+                    message: 'This user has already existed.',
                     code: 'USER_ALREADY_EXISTS',
                     statusCode: 400
                 } );
