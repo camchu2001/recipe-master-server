@@ -1,0 +1,57 @@
+version: 2.1
+
+# Define the jobs we want to run for this project
+jobs:
+  integration-tests:
+    machine:
+      image: ubuntu-2004:current
+      docker_layer_caching: true
+    resource_class: medium
+    steps:
+      - checkout
+      - run:
+          name: Install nvm
+          command: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+      - run:
+          name: Configure NodeJS
+          command: |
+            nvm install 16.15.0
+            node -v
+      - run:
+          name: Install Dependencies
+          command: |
+            npm i
+      - run:
+          name: Set Database Environment Variables
+          command: |
+            echo "POSTGRES_DB=recipe-master" >> .env
+            echo "POSTGRES_HOST=127.0.0.1" >> .env
+            echo "POSTGRES_PASSWORD=123456789" >> .env
+            echo "POSTGRES_PORT=5432" >> .env
+            echo "POSTGRES_USER=camchu" >> .env
+            echo "DATABASE_URL=postgresql://camchu:123456789@127.0.0.1:5432/recipe-master?schema=public" >> .env
+            cat .env
+      - run:
+          name: Create Empty Temporary Database & Docker Compose
+          command: |
+            npm run temp-database-up
+      - run:
+          name: Migrate database
+          command: |
+            npm run temp-database-migrate
+      - run:
+          name: Run Integration Tests
+          command: npm run test:int-no-coverage
+      - run:
+          name: Drop Temporary Database
+          command: npm run temp-database-down
+          when: always
+      - store_artifacts:
+          path: jest/coverage/integrationTests
+
+# Orchestrate our job run sequence
+workflows:
+  test: 
+    jobs:
+      - integration-tests:
+          context: Recipe Master
