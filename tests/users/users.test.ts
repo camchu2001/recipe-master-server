@@ -1,8 +1,8 @@
-import { User } from '@prisma/client';
-import { Factory } from '../../factory';
 import supertest from 'supertest';
 import { app } from '../../server';
-import * as UserServiceModule from '../../app/users/users.service';
+import { Recipe } from '@prisma/client';
+import { Factory } from '../../factory';
+import * as RecipeServiceModule from '../../app/recipes/recipes.service';
 import { generateRandomString } from '../../utils';
 
 const server = app.listen();
@@ -12,139 +12,129 @@ afterAll( async () => {
     server.close();
 } );
 
-describe( 'GET /users/:userId', () => {
-    describe( 'GET /users/:userId success flow', () => {
-        let user: User;
+describe( 'GET /recipes/:recipeId', () => {
+    describe( 'GET /recipes/:recipeId success flow', () => {
+        let recipe: Recipe;
 
         beforeAll( async () => {
             const factory = new Factory();
-            user = await factory.getUser( {
-                firstName: 'Abigail',
-                lastName: 'Amber',
-                email: generateRandomString() + 'gmail.com'
+            recipe = await factory.getRecipe( {
+                name: generateRandomString(),
+                instructions: 'Put frozen fries into air-fryer and fry for 20m at 400 F.'
             } );
         } );
 
-        it( 'returns user according to the provided userId', async () => {
-            const getUserSpy = jest.spyOn( UserServiceModule, 'getUser' );
+        it( 'returns recipe according to the provided recipeId', async () => {
+            const getRecipeSpy = jest.spyOn( RecipeServiceModule, 'getRecipe' );
 
             const result = await request
-                .get( `/users/${ user.id }` );
+                .get( `/recipes/${ recipe.id }` );
 
-            expect( getUserSpy ).toHaveBeenCalledTimes( 1 );
-            expect( getUserSpy ).toHaveBeenCalledWith( user.id );
+            expect( getRecipeSpy ).toHaveBeenCalledTimes( 1 );
+            expect( getRecipeSpy ).toHaveBeenCalledWith( recipe.id );
 
             expect( result.status ).toBe( 200 );
             expect( result.body ).toStrictEqual(
                 expect.objectContaining(
                     {
-                        id: user.id,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        email: user.email
+                        id: recipe.id,
+                        name: recipe.name,
+                        instructions: recipe.instructions
                     }
                 )
             );
         } );
     } );
 
-    describe( 'GET /users/:userId fail flow', () => {
-        describe( 'user with the provided id does not exist', () => {
-            it( 'returns error user not found', async () => {
-                const getUserSpy = jest.spyOn( UserServiceModule, 'getUser' );
+    describe( 'GET /recipes/:recipeId fail flow', () => {
+        describe( 'recipe with the provided id does not exist', () => {
+            it( 'returns error recipe not found', async () => {
+                const getRecipeSpy = jest.spyOn( RecipeServiceModule, 'getRecipe' );
 
                 const result = await request
-                    .get( '/users/-1' );
+                    .get( '/recipes/-1' );
 
-                expect( getUserSpy ).toHaveBeenCalledTimes( 1 );
-                expect( getUserSpy ).toHaveBeenCalledWith( -1 );
+                expect( getRecipeSpy ).toHaveBeenCalledTimes( 1 );
+                expect( getRecipeSpy ).toHaveBeenCalledWith( -1 );
 
                 expect( result.status ).toBe( 404 );
-                expect( result.body ).toStrictEqual( {
-                    message: 'This requested user was not found.',
-                    code: 'USER_NOT_FOUND',
-                    statusCode: 404
-                } );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( {
+                        message: 'This requested recipe was not found.',
+                        code: 'RECIPE_NOT_FOUND',
+                        statusCode: 404
+                    } )
+                );
             } );
         } );
     } );
 } );
 
-
-describe( 'POST /users', () => {
-    describe( 'POST /users success flow', () => {
-        it( 'returns the newly created user', async () => {
-            const userInput = {
-                firstName: 'Hello',
-                lastName: 'World',
-                email: generateRandomString() + '@gmail.com',
+describe( 'POST /recipes', () => {
+    describe( 'POST /recipes success flow', () => {
+        it( 'returns the newly created recipe', async () => {
+            const recipeInput = {
+                name: generateRandomString(),
+                instructions: 'Mix a bunch of spices together until it tastes right',
                 createdAt: new Date(),
                 updatedAt: null
             };
 
-            const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
+            const createRecipeSpy = jest.spyOn( RecipeServiceModule, 'createRecipe' );
 
             const result = await request
-                .post( '/users' )
-                .send( userInput );
+                .post( '/recipes' )
+                .send( recipeInput );
 
-            expect( createUserSpy ).toHaveBeenCalledTimes( 1 );
-            expect( createUserSpy ).toHaveBeenCalledWith(
-                {
-                    firstName: userInput.firstName,
-                    lastName: userInput.lastName,
-                    email: userInput.email
-                }
-            );
+            expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
+            expect( createRecipeSpy ).toHaveBeenCalledWith( {
+                name: recipeInput.name,
+                instructions: recipeInput.instructions
+            } );
 
             expect( result.status ).toBe( 201 );
             expect( result.body ).toStrictEqual(
-                expect.objectContaining(
-                    {
-                        firstName: userInput.firstName,
-                        lastName: userInput.lastName,
-                        email: userInput.email
-                    }
-                )
+                expect.objectContaining( {
+                    name: recipeInput.name,
+                    instructions: recipeInput.instructions
+                } )
             );
         } );
     } );
 
-    describe( 'POST /users fail flow', () => {
-        describe( 'user has already exist', () => {
-            let user: User;
+    describe( 'POST /recipes fail flow', () => {
+        describe( 'recipe has already exist', () => {
+            let recipe: Recipe;
 
             beforeAll( async () => {
                 const factory = new Factory();
-                user = await factory.getUser( {
-                    firstName: 'Abigail',
-                    lastName: 'Abigail',
-                    email: generateRandomString() + '@gmail.com'
+                recipe = await factory.getRecipe( {
+                    name: generateRandomString(),
+                    instructions: 'Mix a bunch of spices together until it tastes right'
                 } );
             } );
 
-            it( 'returns error user already existed', async () => {
-                const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
+            it( 'returns error recipe already existed', async () => {
+                const createRecipeSpy = jest.spyOn( RecipeServiceModule, 'createRecipe' );
 
                 const result = await request
-                    .post( '/users' )
-                    .send( user );
+                    .post( '/recipes' )
+                    .send( recipe );
 
-                expect( createUserSpy ).toHaveBeenCalledTimes( 1 );
-                expect( createUserSpy ).toHaveBeenCalledWith(
-                    {
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        email: user.email
-                    }
-                );
+                expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
+                expect( createRecipeSpy ).toHaveBeenCalledWith( {
+                    name: recipe.name,
+                    instructions: recipe.instructions
+                } );
 
                 expect( result.status ).toBe( 400 );
-                expect( result.body ).toStrictEqual( {
-                    message: 'This user has already existed.',
-                    code: 'USER_ALREADY_EXISTS',
-                    statusCode: 400
-                } );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( {
+                        message: 'This recipe has already existed.',
+                        code: 'RECIPE_ALREADY_EXISTS',
+                        statusCode: 400
+                    } )
+                );
             } );
         } );
     } );
