@@ -12,7 +12,7 @@ export class RecipeNotFound extends ResourceNotFound {
 
 export class RecipeAlreadyExists extends ResourceError {
     public constructor () {
-        const message = 'This recipe has already exists.';
+        const message = 'This recipe has already existed.';
         const code = 'RECIPE_ALREADY_EXISTS';
         const statusCode = 400;
 
