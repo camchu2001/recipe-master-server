@@ -1,16 +1,29 @@
-import { User } from '@prisma/client';
+import { Recipe, User } from '@prisma/client';
 import { createUser } from './user';
+import { createRecipe } from './recipe';
 
 export class Factory {
     async getUser (
         newUser: Partial<User> = {}
     ): Promise<User> {
-        const createBusinessResult = await createUser( newUser );
+        const createUserResult = await createUser( newUser );
 
-        if ( createBusinessResult.isError() ) {
-            throw createBusinessResult.value;
+        if ( createUserResult.isError() ) {
+            throw createUserResult.value;
         }
 
-        return createBusinessResult.value;
+        return createUserResult.value;
+    }
+
+    async getRecipe (
+        newRecipe: Partial<Recipe> = {}
+    ): Promise<Recipe> {
+        const createRecipeResult = await createRecipe( newRecipe );
+
+        if ( createRecipeResult.isError() ) {
+            throw createRecipeResult.value;
+        }
+
+        return createRecipeResult.value;
     }
 }

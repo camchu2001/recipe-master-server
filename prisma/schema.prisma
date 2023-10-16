@@ -18,7 +18,7 @@ model User {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  User_Recipe User_Recipe[]
+  userRecipes UserRecipe[]
 
   @@map("users")
 }
@@ -30,8 +30,8 @@ model Recipe {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
 
-  User_Recipe     User_Recipe[]
-  Recipe_Category Recipe_Category[]
+  userRecipes      UserRecipe[]
+  recipeCategories RecipeCategory[]
 
   @@map("recipes")
 }
@@ -43,12 +43,12 @@ model Category {
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime? @updatedAt @map("updated_at")
 
-  Recipe_Category Recipe_Category[]
+  recipeCategories RecipeCategory[]
 
   @@map("categories")
 }
 
-model User_Recipe {
+model UserRecipe {
   id        Int       @id @default(autoincrement())
   userId    Int       @map("user_id")
   recipeId  Int       @map("recipe_id")
@@ -58,10 +58,11 @@ model User_Recipe {
   user   User   @relation(fields: [userId], references: [id])
   recipe Recipe @relation(fields: [recipeId], references: [id])
 
+  @@unique([userId, recipeId])
   @@map("users_recipes")
 }
 
-model Recipe_Category {
+model RecipeCategory {
   id         Int       @id @default(autoincrement())
   recipeId   Int       @map("recipe_id")
   categoryId Int       @map("category_id")
@@ -71,5 +72,6 @@ model Recipe_Category {
   recipe   Recipe   @relation(fields: [recipeId], references: [id])
   category Category @relation(fields: [categoryId], references: [id])
 
+  @@unique([recipeId, categoryId])
   @@map("recipes_categories")
 }

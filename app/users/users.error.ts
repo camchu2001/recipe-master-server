@@ -12,7 +12,7 @@ export class UserNotFound extends ResourceNotFound {
 
 export class UserAlreadyExists extends ResourceError {
     public constructor () {
-        const message = 'This user has already exists.';
+        const message = 'This user has already existed.';
         const code = 'USER_ALREADY_EXISTS';
         const statusCode = 400;
 
