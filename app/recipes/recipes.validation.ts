@@ -6,7 +6,7 @@ export const CREATE_RECIPE = Joi.object( {
     body: Joi.object(
         {
             name: Joi.string(),
-            instructions: Joi.string()
+            instructions: Joi.string
         }
     ).options( { presence: 'required' } )
         .required()
