@@ -1,6 +1,9 @@
-import { Recipe, User } from '@prisma/client';
+import {
+    Category, Recipe, User
+} from '@prisma/client';
 import { createUser } from './user';
 import { createRecipe } from './recipe';
+import { createCategory } from './category';
 
 export class Factory {
     async getUser (
@@ -25,5 +28,17 @@ export class Factory {
         }
 
         return createRecipeResult.value;
+    }
+
+    async getCategory (
+        newCategory: Partial<Category> = {}
+    ): Promise<Category> {
+        const createCategoryResult = await createCategory( newCategory );
+
+        if ( createCategoryResult.isError() ) {
+            throw createCategoryResult.value;
+        }
+
+        return createCategoryResult.value;
     }
 }
