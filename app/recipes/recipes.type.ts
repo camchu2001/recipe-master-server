@@ -1,4 +1,3 @@
-import { Prisma } from '@prisma/client';
 import { Request } from 'express';
 
 export interface GetRecipeRequest extends Request {
@@ -8,5 +7,9 @@ export interface GetRecipeRequest extends Request {
 }
 
 export interface CreateRecipeRequest extends Request {
-    body: Prisma.RecipeCreateInput;
+    body: {
+        name: string;
+        instructions: string;
+        userId: number;
+    };
 }

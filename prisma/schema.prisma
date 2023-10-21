@@ -19,17 +19,20 @@ model User {
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   userRecipes UserRecipe[]
+  Recipe      Recipe[]
 
   @@map("users")
 }
 
 model Recipe {
   id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
   name         String    @unique
   instructions String
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
 
+  user             User             @relation(fields: [userId], references: [id])
   userRecipes      UserRecipe[]
   recipeCategories RecipeCategory[]
 
