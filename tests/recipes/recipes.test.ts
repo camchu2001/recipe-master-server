@@ -131,6 +131,7 @@ describe( 'POST /recipes', () => {
 
             it( 'returns error recipe already existed', async () => {
                 const recipeInput = {
+                    userId: user.id,
                     name: recipe.name,
                     instructions: recipe.instructions
                 };
@@ -143,8 +144,8 @@ describe( 'POST /recipes', () => {
 
                 expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
                 expect( createRecipeSpy ).toHaveBeenCalledWith( {
-                    user: { connect: { id: recipe.userId } },
-                    name: recipe.name,
+                    user: { connect: { id: recipeInput.userId } },
+                    name: recipeInput.name,
                     instructions: recipe.instructions
                 } );
 

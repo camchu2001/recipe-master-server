@@ -137,9 +137,9 @@ describe( 'POST /users', () => {
                 expect( createUserSpy ).toHaveBeenCalledTimes( 1 );
                 expect( createUserSpy ).toHaveBeenCalledWith(
                     {
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        email: user.email
+                        firstName: userInput.firstName,
+                        lastName: userInput.lastName,
+                        email: userInput.email
                     }
                 );
 
