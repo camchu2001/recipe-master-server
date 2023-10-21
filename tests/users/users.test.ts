@@ -77,9 +77,7 @@ describe( 'POST /users', () => {
             const userInput = {
                 firstName: 'Hello',
                 lastName: 'World',
-                email: generateRandomString() + '@gmail.com',
-                createdAt: new Date(),
-                updatedAt: null
+                email: generateRandomString() + '@gmail.com'
             };
 
             const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
@@ -124,11 +122,17 @@ describe( 'POST /users', () => {
             } );
 
             it( 'returns error user already existed', async () => {
+                const userInput = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email
+                };
+
                 const createUserSpy = jest.spyOn( UserServiceModule, 'createUser' );
 
                 const result = await request
                     .post( '/users' )
-                    .send( user );
+                    .send( userInput );
 
                 expect( createUserSpy ).toHaveBeenCalledTimes( 1 );
                 expect( createUserSpy ).toHaveBeenCalledWith(

@@ -75,9 +75,7 @@ describe( 'POST /recipes', () => {
         it( 'returns the newly created recipe', async () => {
             const recipeInput = {
                 name: generateRandomString(),
-                instructions: 'Mix a bunch of spices together until it tastes right',
-                createdAt: new Date(),
-                updatedAt: null
+                instructions: 'Mix a bunch of spices together until it tastes right'
             };
 
             const createRecipeSpy = jest.spyOn( RecipeServiceModule, 'createRecipe' );
@@ -115,11 +113,16 @@ describe( 'POST /recipes', () => {
             } );
 
             it( 'returns error recipe already existed', async () => {
+                const recipeInput = {
+                    name: recipe.name,
+                    instructions: recipe.instructions
+                };
+
                 const createRecipeSpy = jest.spyOn( RecipeServiceModule, 'createRecipe' );
 
                 const result = await request
                     .post( '/recipes' )
-                    .send( recipe );
+                    .send( recipeInput );
 
                 expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
                 expect( createRecipeSpy ).toHaveBeenCalledWith( {
