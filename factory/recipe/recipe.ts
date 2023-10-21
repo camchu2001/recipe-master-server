@@ -9,6 +9,7 @@ import {
 
 export const createRecipe = async ( {
     id = generateRandomInteger(),
+    userId = generateRandomInteger(),
     name = 'Pho',
     instructions = 'Boil beef broth, add spices like star anise and cinnamon, and simmer. Cook rice noodles, place in a bowl, add hot broth, and top with herbs, bean sprouts, and meat.',
     createdAt = new Date(),
@@ -20,6 +21,7 @@ export const createRecipe = async ( {
         seededRecipe = await prismaClient.recipe.create( {
             data: {
                 id,
+                userId,
                 name,
                 instructions,
                 createdAt,
