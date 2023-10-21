@@ -146,7 +146,7 @@ describe( 'POST /recipes', () => {
                 expect( createRecipeSpy ).toHaveBeenCalledWith( {
                     user: { connect: { id: recipeInput.userId } },
                     name: recipeInput.name,
-                    instructions: recipe.instructions
+                    instructions: recipeInput.instructions
                 } );
 
                 expect( result.status ).toBe( 400 );
