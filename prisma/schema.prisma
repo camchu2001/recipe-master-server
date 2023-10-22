@@ -18,9 +18,8 @@ model User {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  userRecipes UserRecipe[]
-  recipe      Recipe[]
-  collection  Collection[]
+  recipe     Recipe[]
+  collection Collection[]
 
   @@map("users")
 }
@@ -33,9 +32,9 @@ model Recipe {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
 
-  user             User             @relation(fields: [userId], references: [id])
-  userRecipes      UserRecipe[]
+  user             User               @relation(fields: [userId], references: [id])
   recipeCategories RecipeCategory[]
+  collectionRecipe CollectionRecipe[]
 
   @@map("recipes")
 }
@@ -59,24 +58,25 @@ model Collection {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user             User               @relation(fields: [userId], references: [id])
+  collectionRecipe CollectionRecipe[]
 
   @@unique([userId, name])
   @@map("collections")
 }
 
-model UserRecipe {
-  id        Int       @id @default(autoincrement())
-  userId    Int       @map("user_id")
-  recipeId  Int       @map("recipe_id")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @updatedAt @map("updated_at")
+model CollectionRecipe {
+  id           Int       @id @default(autoincrement())
+  collectionId Int       @map("collection_id")
+  recipeId     Int       @map("recipe_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
 
-  user   User   @relation(fields: [userId], references: [id])
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  collection Collection @relation(fields: [collectionId], references: [id])
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
 
-  @@unique([userId, recipeId])
-  @@map("users_recipes")
+  @@unique([collectionId, recipeId])
+  @@map("collections_recipes")
 }
 
 model RecipeCategory {
