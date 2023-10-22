@@ -1,6 +1,9 @@
-import { Recipe, User } from '@prisma/client';
+import {
+    Collection, Recipe, User
+} from '@prisma/client';
 import { createUser } from './user';
 import { createRecipe } from './recipe';
+import { createCollection } from './collection';
 
 export class Factory {
     async getUser (
@@ -25,5 +28,17 @@ export class Factory {
         }
 
         return createRecipeResult.value;
+    }
+
+    async getCollection (
+        newCollection: Partial<Collection> = {}
+    ): Promise<Collection> {
+        const createCollectionResult = await createCollection( newCollection );
+
+        if ( createCollectionResult.isError() ) {
+            throw createCollectionResult.value;
+        }
+
+        return createCollectionResult.value;
     }
 }
