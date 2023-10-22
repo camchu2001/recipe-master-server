@@ -19,7 +19,8 @@ model User {
   updatedAt DateTime? @updatedAt @map("updated_at")
 
   userRecipes UserRecipe[]
-  Recipe      Recipe[]
+  recipe      Recipe[]
+  collection  Collection[]
 
   @@map("users")
 }
@@ -49,6 +50,19 @@ model Category {
   recipeCategories RecipeCategory[]
 
   @@map("categories")
+}
+
+model Collection {
+  id        Int       @id @default(autoincrement())
+  userId    Int       @map("user_id")
+  name      String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, name])
+  @@map("collections")
 }
 
 model UserRecipe {
