@@ -11,6 +11,7 @@ export const GET_RECIPES = Joi.object( {
 export const CREATE_RECIPE = Joi.object( {
     body: Joi.object(
         {
+            userId: Joi.number(),
             name: Joi.string(),
             instructions: Joi.string()
         }

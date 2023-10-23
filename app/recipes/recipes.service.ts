@@ -10,6 +10,7 @@ import {
     Either, error, success
 } from '../../types';
 import { RecipeAlreadyExists, RecipeNotFound } from './recipes.error';
+import { UserNotFound } from '../users';
 
 export const getRecipe = async (
     recipeId: Recipe['id']
@@ -59,6 +60,10 @@ export const createRecipe = async (
 
         if ( databaseError instanceof DatabaseDuplicateKeyError ) {
             return error( new RecipeAlreadyExists() );
+        }
+
+        if ( databaseError instanceof DatabaseResourceNotFoundError ) {
+            return error( new UserNotFound() );
         }
 
         return error( databaseError );

@@ -18,20 +18,23 @@ model User {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  userRecipes UserRecipe[]
+  recipes     Recipe[]
+  collections Collection[]
 
   @@map("users")
 }
 
 model Recipe {
   id           Int       @id @default(autoincrement())
+  userId       Int       @map("user_id")
   name         String    @unique
   instructions String
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime? @updatedAt @map("updated_at")
 
-  userRecipes      UserRecipe[]
-  recipeCategories RecipeCategory[]
+  user              User               @relation(fields: [userId], references: [id])
+  recipeCategories  RecipeCategory[]
+  collectionRecipes CollectionRecipe[]
 
   @@map("recipes")
 }
@@ -48,18 +51,32 @@ model Category {
   @@map("categories")
 }
 
-model UserRecipe {
+model Collection {
   id        Int       @id @default(autoincrement())
   userId    Int       @map("user_id")
-  recipeId  Int       @map("recipe_id")
+  name      String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  user   User   @relation(fields: [userId], references: [id])
-  recipe Recipe @relation(fields: [recipeId], references: [id])
+  user              User               @relation(fields: [userId], references: [id])
+  collectionRecipes CollectionRecipe[]
 
-  @@unique([userId, recipeId])
-  @@map("users_recipes")
+  @@unique([userId, name])
+  @@map("collections")
+}
+
+model CollectionRecipe {
+  id           Int       @id @default(autoincrement())
+  collectionId Int       @map("collection_id")
+  recipeId     Int       @map("recipe_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime? @updatedAt @map("updated_at")
+
+  collection Collection @relation(fields: [collectionId], references: [id])
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
+
+  @@unique([collectionId, recipeId])
+  @@map("collections_recipes")
 }
 
 model RecipeCategory {
