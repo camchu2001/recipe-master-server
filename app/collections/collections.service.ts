@@ -7,7 +7,7 @@ import {
     DatabaseDuplicateKeyError,
     DatabaseError, DatabaseResourceNotFoundError, createDatabaseError, prismaClient
 } from '../../prisma';
-import { UserNotFound } from '../users/users.error';
+import { UserNotFound } from '../users';
 
 export const getCollection = async (
     collectionId: Collection['id']
