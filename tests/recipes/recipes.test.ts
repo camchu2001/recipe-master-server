@@ -15,16 +15,10 @@ afterAll( async () => {
 describe( 'GET /recipes/:recipeId', () => {
     describe( 'GET /recipes/:recipeId success flow', () => {
         let recipe: Recipe;
-        let user: User;
 
         beforeAll( async () => {
             const factory = new Factory();
-            user = await factory.getUser( );
-            recipe = await factory.getRecipe( {
-                userId: user.id,
-                name: generateRandomString(),
-                instructions: 'Put frozen fries into air-fryer and fry for 20m at 400 F.'
-            } );
+            recipe = await factory.getRecipe( { instructions: 'Put frozen fries into air-fryer and fry for 20m at 400 F.' } );
         } );
 
         it( 'returns recipe according to the provided recipeId', async () => {
@@ -117,21 +111,15 @@ describe( 'POST /recipes', () => {
     describe( 'POST /recipes fail flow', () => {
         describe( 'recipe has already exist', () => {
             let recipe: Recipe;
-            let user: User;
 
             beforeAll( async () => {
                 const factory = new Factory();
-                user = await factory.getUser();
-                recipe = await factory.getRecipe( {
-                    userId: user.id,
-                    name: generateRandomString(),
-                    instructions: 'Mix a bunch of spices together until it tastes right'
-                } );
+                recipe = await factory.getRecipe( { instructions: 'Mix a bunch of spices together until it tastes right' } );
             } );
 
             it( 'returns error recipe already existed', async () => {
                 const recipeInput = {
-                    userId: user.id,
+                    userId: recipe.userId,
                     name: recipe.name,
                     instructions: recipe.instructions
                 };

@@ -2,7 +2,6 @@ import { Prisma, Recipe } from '@prisma/client';
 import {
     DatabaseDuplicateKeyError,
     DatabaseError,
-    DatabaseForeignKeyError,
     DatabaseResourceNotFoundError,
     createDatabaseError,
     prismaClient
@@ -10,9 +9,8 @@ import {
 import {
     Either, error, success
 } from '../../types';
-import {
-    CreateRecipeUserNotFound, RecipeAlreadyExists, RecipeNotFound
-} from './recipes.error';
+import { RecipeAlreadyExists, RecipeNotFound } from './recipes.error';
+import { UserNotFound } from '../users/users.error';
 
 export const getRecipe = async (
     recipeId: Recipe['id']
@@ -49,7 +47,7 @@ export const createRecipe = async (
         }
 
         if ( databaseError instanceof DatabaseResourceNotFoundError ) {
-            return error( new CreateRecipeUserNotFound() );
+            return error( new UserNotFound() );
         }
 
         return error( databaseError );

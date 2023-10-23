@@ -15,15 +15,10 @@ afterAll( async () => {
 describe( 'GET /collections/:collectionId', () => {
     describe( 'GET /collections/:collectionId success flow', () => {
         let collection: Collection;
-        let user: User;
 
         beforeAll( async () => {
             const factory = new Factory();
-            user = await factory.getUser( );
-            collection = await factory.getCollection( {
-                userId: user.id,
-                name: generateRandomString()
-            } );
+            collection = await factory.getCollection();
         } );
 
         it( 'returns collection according to the provided collectionId', async () => {
@@ -112,20 +107,15 @@ describe( 'POST /collections', () => {
     describe( 'POST /collection fail flow', () => {
         describe( 'collection has already exist', () => {
             let collection: Collection;
-            let user: User;
 
             beforeAll( async () => {
                 const factory = new Factory();
-                user = await factory.getUser();
-                collection = await factory.getCollection( {
-                    userId: user.id,
-                    name: generateRandomString()
-                } );
+                collection = await factory.getCollection();
             } );
 
             it( 'returns error collection already existed', async () => {
                 const collectionInput = {
-                    userId: user.id,
+                    userId: collection.userId,
                     name: collection.name
                 };
 

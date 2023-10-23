@@ -1,7 +1,5 @@
 import { Collection, Prisma } from '@prisma/client';
-import {
-    CollectionAlreadyExists, CollectionNotFound, CreateCollectionUserNotFound
-} from './collections.error';
+import { CollectionAlreadyExists, CollectionNotFound } from './collections.error';
 import {
     Either, error, success
 } from '../../types';
@@ -9,6 +7,7 @@ import {
     DatabaseDuplicateKeyError,
     DatabaseError, DatabaseResourceNotFoundError, createDatabaseError, prismaClient
 } from '../../prisma';
+import { UserNotFound } from '../users/users.error';
 
 export const getCollection = async (
     collectionId: Collection['id']
@@ -45,7 +44,7 @@ export const createCollection = async (
         }
 
         if ( databaseError instanceof DatabaseResourceNotFoundError ) {
-            return error( new CreateCollectionUserNotFound() );
+            return error( new UserNotFound() );
         }
 
         return error( databaseError );
