@@ -1,5 +1,7 @@
 import { Collection, Prisma } from '@prisma/client';
-import { CollectionAlreadyExists, CollectionNotFound } from './collections.error';
+import {
+    CollectionAlreadyExists, CollectionNotFound, CreateCollectionUserNotFound
+} from './collections.error';
 import {
     Either, error, success
 } from '../../types';
@@ -40,6 +42,10 @@ export const createCollection = async (
 
         if ( databaseError instanceof DatabaseDuplicateKeyError ) {
             return error( new CollectionAlreadyExists() );
+        }
+
+        if ( databaseError instanceof DatabaseResourceNotFoundError ) {
+            return error( new CreateCollectionUserNotFound() );
         }
 
         return error( databaseError );

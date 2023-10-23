@@ -19,3 +19,13 @@ export class RecipeAlreadyExists extends ResourceError {
         super( { message, code, statusCode } );
     }
 }
+
+export class CreateRecipeUserNotFound extends ResourceNotFound {
+    public constructor () {
+        const message = 'This user was not found.';
+        const code = 'CREATE_RECIPE_USER_NOT_FOUND';
+        const statusCode = 404;
+
+        super( { message, code, statusCode } );
+    }
+}

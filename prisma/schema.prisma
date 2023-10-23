@@ -18,8 +18,8 @@ model User {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  recipe     Recipe[]
-  collection Collection[]
+  recipes     Recipe[]
+  collections Collection[]
 
   @@map("users")
 }
@@ -58,8 +58,8 @@ model Collection {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  user             User               @relation(fields: [userId], references: [id])
-  collectionRecipe CollectionRecipe[]
+  user              User               @relation(fields: [userId], references: [id])
+  collectionRecipes CollectionRecipe[]
 
   @@unique([userId, name])
   @@map("collections")

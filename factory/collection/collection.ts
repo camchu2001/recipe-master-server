@@ -6,14 +6,15 @@ import {
 import {
     Either, error, success
 } from '../../types';
+import { PartialExcept } from '../../types/partialExcept';
 
 export const createCollection = async ( {
     id = generateRandomInteger(),
-    userId = generateRandomInteger(),
+    userId,
     name = 'My Collection',
     createdAt = new Date(),
     updatedAt = null
-}: Partial<Collection> ): Promise<Either<DatabaseError, Collection>> => {
+}: PartialExcept<Collection, 'userId'> ): Promise<Either<DatabaseError, Collection>> => {
     let seededCollection: Collection;
 
     try {

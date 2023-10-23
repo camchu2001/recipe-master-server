@@ -44,3 +44,15 @@ export class DatabaseDuplicateKeyError extends DatabaseError {
         } );
     }
 }
+
+export class DatabaseForeignKeyError extends DatabaseError {
+    public constructor ( error: Prisma.PrismaClientKnownRequestError ) {
+        const message = 'A foreign key constraint was violated';
+        const statusCode = 400;
+        super( {
+            error,
+            message,
+            statusCode
+        } );
+    }
+}
