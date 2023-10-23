@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import { app } from '../../server';
-import { Recipe } from '@prisma/client';
+import { Recipe, User } from '@prisma/client';
 import { Factory } from '../../factory';
 import * as RecipeServiceModule from '../../app/recipes/recipes.service';
 import { generateRandomString } from '../../utils';
@@ -18,10 +18,7 @@ describe( 'GET /recipes/:recipeId', () => {
 
         beforeAll( async () => {
             const factory = new Factory();
-            recipe = await factory.getRecipe( {
-                name: generateRandomString(),
-                instructions: 'Put frozen fries into air-fryer and fry for 20m at 400 F.'
-            } );
+            recipe = await factory.getRecipe( { instructions: 'Put frozen fries into air-fryer and fry for 20m at 400 F.' } );
         } );
 
         it( 'returns recipe according to the provided recipeId', async () => {
@@ -38,6 +35,7 @@ describe( 'GET /recipes/:recipeId', () => {
                 expect.objectContaining(
                     {
                         id: recipe.id,
+                        userId: recipe.userId,
                         name: recipe.name,
                         instructions: recipe.instructions
                     }
@@ -72,8 +70,16 @@ describe( 'GET /recipes/:recipeId', () => {
 
 describe( 'POST /recipes', () => {
     describe( 'POST /recipes success flow', () => {
+        let user: User;
+
+        beforeAll( async () => {
+            const factory = new Factory();
+            user = await factory.getUser( );
+        } );
+
         it( 'returns the newly created recipe', async () => {
             const recipeInput = {
+                userId: user.id,
                 name: generateRandomString(),
                 instructions: 'Mix a bunch of spices together until it tastes right'
             };
@@ -86,6 +92,7 @@ describe( 'POST /recipes', () => {
 
             expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
             expect( createRecipeSpy ).toHaveBeenCalledWith( {
+                user: { connect: { id: recipeInput.userId } },
                 name: recipeInput.name,
                 instructions: recipeInput.instructions
             } );
@@ -93,6 +100,7 @@ describe( 'POST /recipes', () => {
             expect( result.status ).toBe( 201 );
             expect( result.body ).toStrictEqual(
                 expect.objectContaining( {
+                    userId: recipeInput.userId,
                     name: recipeInput.name,
                     instructions: recipeInput.instructions
                 } )
@@ -106,14 +114,12 @@ describe( 'POST /recipes', () => {
 
             beforeAll( async () => {
                 const factory = new Factory();
-                recipe = await factory.getRecipe( {
-                    name: generateRandomString(),
-                    instructions: 'Mix a bunch of spices together until it tastes right'
-                } );
+                recipe = await factory.getRecipe( { instructions: 'Mix a bunch of spices together until it tastes right' } );
             } );
 
             it( 'returns error recipe already existed', async () => {
                 const recipeInput = {
+                    userId: recipe.userId,
                     name: recipe.name,
                     instructions: recipe.instructions
                 };
@@ -126,8 +132,9 @@ describe( 'POST /recipes', () => {
 
                 expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
                 expect( createRecipeSpy ).toHaveBeenCalledWith( {
-                    name: recipe.name,
-                    instructions: recipe.instructions
+                    user: { connect: { id: recipeInput.userId } },
+                    name: recipeInput.name,
+                    instructions: recipeInput.instructions
                 } );
 
                 expect( result.status ).toBe( 400 );

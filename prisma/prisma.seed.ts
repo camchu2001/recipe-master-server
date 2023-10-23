@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client';
-import { generateRandomString } from '../utils';
 
 const prisma = new PrismaClient();
 
 const main = async () => {
-    await prisma.user.create( {
+    const seedUser = await prisma.user.create( {
         data: {
             firstName: 'Cam',
             lastName: 'Chu',
@@ -14,6 +13,7 @@ const main = async () => {
 
     await prisma.recipe.create( {
         data: {
+            userId: seedUser.id,
             name: 'Egg Fried Rice',
             instructions: 'Heat oil in a wok, add beaten eggs, rice, and the optional soy sauce. Stir-fry until cooked, add optional green scallions garnish.'
         }

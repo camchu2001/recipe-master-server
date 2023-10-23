@@ -9,8 +9,8 @@ import {
 
 export const createUser = async ( {
     id = generateRandomInteger(),
-    firstName = 'Bunny',
-    lastName = 'Rabbit',
+    firstName = generateRandomString(),
+    lastName = generateRandomString(),
     email = generateRandomString() + 'gmail.com',
     createdAt = new Date(),
     updatedAt = null

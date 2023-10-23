@@ -27,9 +27,10 @@ export const createRecipeHandler = async (
     req: CreateRecipeRequest,
     res: Response<ResourceError | Recipe>
 ): Promise<Response<ResourceError | Recipe>> => {
-    const { name, instructions } = req.body;
+    const { userId, name, instructions } = req.body;
 
     const createRecipeResult = await createRecipe( {
+        user: { connect: { id: userId } },
         name,
         instructions
     } );
