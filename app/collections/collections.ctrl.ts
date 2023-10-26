@@ -2,7 +2,9 @@ import { Response } from 'express';
 import { Collection } from '@prisma/client';
 import { ResourceError } from '../../errors';
 import { CreateCollectionRequest, GetCollectionRequest } from './collections.types';
-import { createCollection, getCollection } from './collections.service';
+import {
+    createCollection, getCollection, getCollections
+} from './collections.service';
 
 export const getCollectionHandler = async (
     req: GetCollectionRequest,
@@ -21,6 +23,25 @@ export const getCollectionHandler = async (
     return res
         .status( 200 )
         .json( getCollectionResult.value );
+};
+
+export const getCollectionsHandler = async (
+    req: GetCollectionRequest,
+    res: Response<ResourceError | Collection[]>
+): Promise<Response<ResourceError | Collection[]>> => {
+    const { userId } = req.query;
+
+    const getCollectionsResult = await getCollections( { userId: Number( userId ) } );
+
+    if ( getCollectionsResult.isError() ) {
+        return res
+            .status( getCollectionsResult.value.statusCode )
+            .json( getCollectionsResult.value );
+    }
+
+    return res
+        .status( 200 )
+        .json( getCollectionsResult.value );
 };
 
 export const createCollectionHandler = async (
