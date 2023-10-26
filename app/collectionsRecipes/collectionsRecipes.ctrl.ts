@@ -2,7 +2,9 @@ import { Response } from 'express';
 import { CollectionRecipe } from '@prisma/client';
 import { ResourceError } from '../../errors';
 import { CreateCollectionRecipeRequest, GetCollectionRecipeRequest } from './collectionsRecipes.types';
-import { createCollectionRecipe, getCollectionRecipe } from './collectionsRecipes.service';
+import {
+    createCollectionRecipe, getCollectionRecipe, getCollectionRecipes
+} from './collectionsRecipes.service';
 
 export const getCollectionRecipeHandler = async (
     req: GetCollectionRecipeRequest,
@@ -21,6 +23,25 @@ export const getCollectionRecipeHandler = async (
     return res
         .status( 200 )
         .json( getCollectionRecipeResult.value );
+};
+
+export const getCollectionRecipesHandler = async (
+    req: GetCollectionRecipeRequest,
+    res: Response<ResourceError | CollectionRecipe[]>
+): Promise<Response<ResourceError | CollectionRecipe[]>> => {
+    const { collectionId } = req.query;
+
+    const getCollectionRecipesResult = await getCollectionRecipes( { collectionId: Number( collectionId ) } );
+
+    if ( getCollectionRecipesResult.isError() ) {
+        return res
+            .status( getCollectionRecipesResult.value.statusCode )
+            .json( getCollectionRecipesResult.value );
+    }
+
+    return res
+        .status( 200 )
+        .json( getCollectionRecipesResult.value );
 };
 
 export const createCollectionRecipeHandler = async (

@@ -32,6 +32,24 @@ export const getCollectionRecipe = async (
     return success( collectionRecipe );
 };
 
+export const getCollectionRecipes = async (
+    getCollectionRecipesParams: Prisma.CollectionRecipeWhereInput
+): Promise<Either<DatabaseError, CollectionRecipe[]>> => {
+    let collectionRecipes: CollectionRecipe[];
+
+    try {
+        collectionRecipes = await prismaClient.collectionRecipe.findMany(
+            { where: { ...getCollectionRecipesParams } }
+        );
+    } catch ( err ) {
+        const databaseError = createDatabaseError( err );
+
+        return error( databaseError );
+    }
+
+    return success( collectionRecipes );
+};
+
 export const createCollectionRecipe = async (
     collectionRecipe: Prisma.CollectionRecipeCreateInput
 ): Promise<Either<DatabaseError | CollectionRecipeAlreadyExists, CollectionRecipe>> => {
