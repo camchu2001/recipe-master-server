@@ -56,4 +56,16 @@ export class Factory {
 
         return createCollectionResult.value;
     }
+
+    async getCategory (
+        newCategory: Partial<Category> = {}
+    ): Promise<Category> {
+        const createCategoryResult = await createCategory( newCategory );
+
+        if ( createCategoryResult.isError() ) {
+            throw createCategoryResult.value;
+        }
+
+        return createCategoryResult.value;
+    }
 }

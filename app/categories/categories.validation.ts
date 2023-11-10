@@ -6,7 +6,7 @@ export const CREATE_CATEGORY = Joi.object( {
     body: Joi.object(
         {
             name: Joi.string(),
-            description: Joi.string()
+            description: Joi.any()
         }
     ).options( { presence: 'required' } )
         .required()

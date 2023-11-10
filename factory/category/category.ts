@@ -1,5 +1,5 @@
 import { Category } from '@prisma/client';
-import { generateRandomInteger } from '../../utils';
+import { generateRandomInteger, generateRandomString } from '../../utils';
 import {
     DatabaseError, createDatabaseError, prismaClient
 } from '../../prisma';
@@ -9,7 +9,7 @@ import {
 
 export const createCategory = async ( {
     id = generateRandomInteger(),
-    name = 'Vietnamese Cuisine',
+    name = generateRandomString(),
     description = 'Only the best food in the world',
     createdAt = new Date(),
     updatedAt = null
