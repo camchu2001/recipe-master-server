@@ -2,7 +2,8 @@ import { Prisma } from '@prisma/client';
 import {
     DatabaseError,
     DatabaseDuplicateKeyError,
-    DatabaseResourceNotFoundError
+    DatabaseResourceNotFoundError,
+    DatabaseForeignKeyError
 } from './prisma.errors';
 
 export const createDatabaseError = (
@@ -12,6 +13,7 @@ export const createDatabaseError = (
 
     if ( error instanceof Prisma.PrismaClientKnownRequestError ) {
         if ( error.code === 'P2002' ) return new DatabaseDuplicateKeyError( error );
+        if ( error.code === 'P2003' ) return new DatabaseForeignKeyError( error );
         if ( error.code === 'P2025' ) return new DatabaseResourceNotFoundError( error );
     }
 

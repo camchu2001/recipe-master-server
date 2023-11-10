@@ -1,9 +1,10 @@
 import {
-    Category, Recipe, User
+    Category, Collection, Recipe, User
 } from '@prisma/client';
 import { createUser } from './user';
 import { createRecipe } from './recipe';
 import { createCategory } from './category';
+import { createCollection } from './collection';
 
 export class Factory {
     async getUser (
@@ -21,7 +22,14 @@ export class Factory {
     async getRecipe (
         newRecipe: Partial<Recipe> = {}
     ): Promise<Recipe> {
-        const createRecipeResult = await createRecipe( newRecipe );
+        let userId = newRecipe.userId;
+
+        if ( !userId ) {
+            const user = await this.getUser();
+            userId = user.id;
+        }
+
+        const createRecipeResult = await createRecipe( { ...newRecipe, userId } );
 
         if ( createRecipeResult.isError() ) {
             throw createRecipeResult.value;
@@ -30,15 +38,22 @@ export class Factory {
         return createRecipeResult.value;
     }
 
-    async getCategory (
-        newCategory: Partial<Category> = {}
-    ): Promise<Category> {
-        const createCategoryResult = await createCategory( newCategory );
+    async getCollection (
+        newCollection: Partial<Collection> = {}
+    ): Promise<Collection> {
+        let userId = newCollection.userId;
 
-        if ( createCategoryResult.isError() ) {
-            throw createCategoryResult.value;
+        if ( !userId ) {
+            const user = await this.getUser();
+            userId = user.id;
         }
 
-        return createCategoryResult.value;
+        const createCollectionResult = await createCollection( { ...newCollection, userId } );
+
+        if ( createCollectionResult.isError() ) {
+            throw createCollectionResult.value;
+        }
+
+        return createCollectionResult.value;
     }
 }

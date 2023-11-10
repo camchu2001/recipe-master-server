@@ -1,5 +1,5 @@
-import { Recipe } from '@prisma/client';
-import { generateRandomInteger, generateRandomString } from '../../utils';
+import { Collection } from '@prisma/client';
+import { generateRandomInteger } from '../../utils';
 import {
     DatabaseError, createDatabaseError, prismaClient
 } from '../../prisma';
@@ -8,23 +8,21 @@ import {
 } from '../../types';
 import { PartialExcept } from '../../types/partialExcept';
 
-export const createRecipe = async ( {
+export const createCollection = async ( {
     id = generateRandomInteger(),
     userId,
-    name = generateRandomString(),
-    instructions = generateRandomString(),
+    name = 'My Collection',
     createdAt = new Date(),
     updatedAt = null
-}: PartialExcept<Recipe, 'userId'> ): Promise<Either<DatabaseError, Recipe>> => {
-    let seededRecipe: Recipe;
+}: PartialExcept<Collection, 'userId'> ): Promise<Either<DatabaseError, Collection>> => {
+    let seededCollection: Collection;
 
     try {
-        seededRecipe = await prismaClient.recipe.create( {
+        seededCollection = await prismaClient.collection.create( {
             data: {
                 id,
                 userId,
                 name,
-                instructions,
                 createdAt,
                 updatedAt
             }
@@ -35,5 +33,5 @@ export const createRecipe = async ( {
         return error( databaseError );
     }
 
-    return success( seededRecipe );
+    return success( seededCollection );
 };
