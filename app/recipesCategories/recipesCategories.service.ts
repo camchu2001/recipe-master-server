@@ -6,6 +6,7 @@ import { RecipeCategoryAlreadyExists, RecipeCategoryNotFound } from './recipesCa
 import {
     Either, error, success
 } from '../../types';
+import { RecipeNotFound } from '../recipes/recipes.error';
 
 export const getRecipeCategory = async (
     recipeCategoryId: RecipeCategory['id']
@@ -55,6 +56,10 @@ export const createRecipeCategory = async (
 
         if ( databaseError instanceof DatabaseDuplicateKeyError ) {
             return error( new RecipeCategoryAlreadyExists() );
+        }
+
+        if ( databaseError.error.message.includes( 'No \'Recipe\' record(s)' ) ) {
+            return error( new RecipeNotFound() );
         }
 
         return error( databaseError );
