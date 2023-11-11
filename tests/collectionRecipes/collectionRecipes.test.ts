@@ -204,5 +204,73 @@ describe( 'POST /collections-recipes', () => {
                 );
             } );
         } );
+
+        describe( 'collectionId does not exist', () => {
+            let recipe: Recipe;
+
+            beforeAll( async () => {
+                const factory = new Factory();
+                recipe = await factory.getRecipe();
+            } );
+
+            it( 'returns error collection already existed', async () => {
+                const collectionRecipeInput = {
+                    collectionId: -1,
+                    recipeId: recipe.id
+                };
+                const createCollectionRecipeSpy = jest.spyOn( CollectionRecipeServiceModule, 'createCollectionRecipe' );
+                const result = await request
+                    .post( '/collections-recipes' )
+                    .send( collectionRecipeInput );
+
+                expect( createCollectionRecipeSpy ).toHaveBeenCalledTimes( 1 );
+                expect( createCollectionRecipeSpy ).toHaveBeenCalledWith( {
+                    collection: { connect: { id: collectionRecipeInput.collectionId } },
+                    recipe: { connect: { id: collectionRecipeInput.recipeId } }
+                } );
+                expect( result.status ).toBe( 404 );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( {
+                        message: 'This requested collection was not found.',
+                        code: 'COLLECTION_NOT_FOUND',
+                        statusCode: 404
+                    } )
+                );
+            } );
+        } );
+
+        describe( 'recipeId does not exist', () => {
+            let collection: Collection;
+
+            beforeAll( async () => {
+                const factory = new Factory();
+                collection = await factory.getCollection();
+            } );
+
+            it( 'returns error collection already existed', async () => {
+                const collectionRecipeInput = {
+                    collectionId: collection.id,
+                    recipeId: -1
+                };
+                const createCollectionRecipeSpy = jest.spyOn( CollectionRecipeServiceModule, 'createCollectionRecipe' );
+                const result = await request
+                    .post( '/collections-recipes' )
+                    .send( collectionRecipeInput );
+
+                expect( createCollectionRecipeSpy ).toHaveBeenCalledTimes( 1 );
+                expect( createCollectionRecipeSpy ).toHaveBeenCalledWith( {
+                    collection: { connect: { id: collectionRecipeInput.collectionId } },
+                    recipe: { connect: { id: collectionRecipeInput.recipeId } }
+                } );
+                expect( result.status ).toBe( 404 );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( {
+                        message: 'This requested recipe was not found.',
+                        code: 'RECIPE_NOT_FOUND',
+                        statusCode: 404
+                    } )
+                );
+            } );
+        } );
     } );
 } );
