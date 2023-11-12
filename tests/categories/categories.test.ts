@@ -13,18 +13,15 @@ afterAll( async () => {
 } );
 
 describe( 'GET /categories/:categoryId', () => {
-    describe( 'GET /categories/:categoryId success flow', () => {
+    describe( 'success flow', () => {
         let category: Category;
 
         beforeAll( async () => {
             const factory = new Factory();
-            category = await factory.getCategory( {
-                name: generateRandomString(),
-                description: null
-            } );
+            category = await factory.getCategory();
         } );
 
-        it( 'returns recipe according to the provided recipeId', async () => {
+        it( 'returns category according to the provided categoryId', async () => {
             const getCategory = jest.spyOn( CategoryServiceModule, 'getCategory' );
 
             const result = await request
@@ -46,7 +43,7 @@ describe( 'GET /categories/:categoryId', () => {
         } );
     } );
 
-    describe( 'GET /categories/:categoryId fail flow', () => {
+    describe( 'fail flow', () => {
         describe( 'category with the provided id does not exist', () => {
             it( 'returns error category not found', async () => {
                 const getCategory = jest.spyOn( CategoryServiceModule, 'getCategory' );
@@ -72,7 +69,7 @@ describe( 'GET /categories/:categoryId', () => {
 
 
 describe( 'POST /categories', () => {
-    describe( 'POST /categories success flow', () => {
+    describe( 'success flow', () => {
         it( 'returns the newly created category', async () => {
             const categoryInput = {
                 name: generateRandomString(),
@@ -101,19 +98,16 @@ describe( 'POST /categories', () => {
         } );
     } );
 
-    describe( 'POST /recipes fail flow', () => {
-        describe( 'recipe has already exist', () => {
+    describe( 'fail flow', () => {
+        describe( 'category has already existed', () => {
             let category: Category;
 
             beforeAll( async () => {
                 const factory = new Factory();
-                category = await factory.getCategory( {
-                    name: generateRandomString(),
-                    description: generateRandomString()
-                } );
+                category = await factory.getCategory();
             } );
 
-            it( 'returns error recipe already existed', async () => {
+            it( 'returns error category already existed', async () => {
                 const categoryInput = {
                     name: category.name,
                     description: category.description
