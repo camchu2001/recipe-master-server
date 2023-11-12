@@ -1,8 +1,9 @@
 import {
-    Collection, CollectionRecipe, Recipe, User
+    Collection, CollectionRecipe, Recipe, User, Category
 } from '@prisma/client';
 import { createUser } from './user';
 import { createRecipe } from './recipe';
+import { createCategory } from './category';
 import { createCollection } from './collection';
 import { createCollectionRecipe } from './collectionRecipe';
 
@@ -82,5 +83,17 @@ export class Factory {
         }
 
         return createCollectioRecipeResult.value;
+    }
+
+    async getCategory (
+        newCategory: Partial<Category> = {}
+    ): Promise<Category> {
+        const createCategoryResult = await createCategory( newCategory );
+
+        if ( createCategoryResult.isError() ) {
+            throw createCategoryResult.value;
+        }
+
+        return createCategoryResult.value;
     }
 }
