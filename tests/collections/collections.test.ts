@@ -67,6 +67,82 @@ describe( 'GET /collections/:collectionId', () => {
     } );
 } );
 
+describe( 'GET /collections by userId', () => {
+    describe( 'GET /collections by userId success flow', () => {
+        let collection1: Collection;
+        let collection2: Collection;
+        let user: User;
+
+        beforeAll( async () => {
+            const factory = new Factory();
+            user = await factory.getUser();
+            collection1 = await factory.getCollection(
+                {
+                    userId: user.id,
+                    name: 'Collection 1'
+                }
+            );
+            collection2 = await factory.getCollection(
+                {
+                    userId: user.id,
+                    name: 'Collection 2'
+                }
+            );
+        } );
+
+        it( 'returns the collection(s) with the given userId', async () => {
+            const getCollectionsSpy = jest.spyOn( CollectionServiceModule, 'getCollections' );
+
+            const result = await request
+                .get( '/collections' )
+                .query( { userId: user.id } );
+
+            expect( getCollectionsSpy ).toHaveBeenCalledTimes( 1 );
+            expect( getCollectionsSpy ).toHaveBeenCalledWith( { userId: user.id } );
+
+            expect( result.status ).toBe( 200 );
+            expect( result.body ).toStrictEqual(
+                expect.arrayContaining( [
+                    expect.objectContaining(
+                        {
+                            id: collection1.id,
+                            userId: collection1.userId,
+                            name: collection1.name
+                        }
+                    ),
+                    expect.objectContaining(
+                        {
+                            id: collection2.id,
+                            userId: collection2.userId,
+                            name: collection2.name
+                        }
+                    )
+                ] )
+            );
+        } );
+    } );
+
+    describe( 'GET /collections by userId fail flow', () => {
+        describe( 'there is no collection with the provided userId', () => {
+            it( 'returns an empty array', async () => {
+                const getCollectionsSpy = jest.spyOn( CollectionServiceModule, 'getCollections' );
+
+                const result = await request
+                    .get( '/collections' )
+                    .query( { userId: -1 } );
+
+                expect( getCollectionsSpy ).toHaveBeenCalledTimes( 1 );
+                expect( getCollectionsSpy ).toHaveBeenCalledWith( { userId: -1 } );
+
+                expect( result.status ).toBe( 200 );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( [] )
+                );
+            } );
+        } );
+    } );
+} );
+
 describe( 'POST /collections', () => {
     describe( 'POST /collections success flow', () => {
         let user: User;

@@ -29,6 +29,22 @@ export const getCollection = async (
     return success( collection );
 };
 
+export const getCollections = async (
+    getCollectionsParams: Prisma.CollectionWhereInput
+): Promise<Either<DatabaseError, Collection[]>> => {
+    let collections: Collection[];
+
+    try {
+        collections = await prismaClient.collection.findMany( { where: { ...getCollectionsParams } } );
+    } catch ( err ) {
+        const databaseError = createDatabaseError( err );
+
+        return error( databaseError );
+    }
+
+    return success( collections );
+};
+
 export const createCollection = async (
     collection: Prisma.CollectionCreateInput
 ): Promise<Either<DatabaseError | CollectionAlreadyExists, Collection>> => {

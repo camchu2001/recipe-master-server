@@ -68,6 +68,84 @@ describe( 'GET /recipes/:recipeId', () => {
     } );
 } );
 
+describe( 'GET /recipes by userId', () => {
+    describe( 'GET /recipes by userId success flow', () => {
+        let recipe1: Recipe;
+        let recipe2: Recipe;
+        let user: User;
+
+        beforeAll( async () => {
+            const factory = new Factory();
+            user = await factory.getUser();
+            recipe1 = await factory.getRecipe(
+                {
+                    userId: user.id,
+                    instructions: 'Instructions for recipe1'
+                }
+            );
+            recipe2 = await factory.getRecipe(
+                {
+                    userId: user.id,
+                    instructions: 'Instructions for recipe2'
+                }
+            );
+        } );
+
+        it( 'returns the recipe(s) with the given userId', async () => {
+            const getRecipesSpy = jest.spyOn( RecipeServiceModule, 'getRecipes' );
+
+            const result = await request
+                .get( '/recipes' )
+                .query( { userId: user.id } );
+
+            expect( getRecipesSpy ).toHaveBeenCalledTimes( 1 );
+            expect( getRecipesSpy ).toHaveBeenCalledWith( { userId: user.id } );
+
+            expect( result.status ).toBe( 200 );
+            expect( result.body ).toStrictEqual(
+                expect.arrayContaining( [
+                    expect.objectContaining(
+                        {
+                            id: recipe1.id,
+                            userId: recipe1.userId,
+                            name: recipe1.name,
+                            instructions: recipe1.instructions
+                        }
+                    ),
+                    expect.objectContaining(
+                        {
+                            id: recipe2.id,
+                            userId: recipe2.userId,
+                            name: recipe2.name,
+                            instructions: recipe2.instructions
+                        }
+                    )
+                ] )
+            );
+        } );
+    } );
+
+    describe( 'GET /recipes by userId fail flow', () => {
+        describe( 'there is no recipe with the provided userId', () => {
+            it( 'returns an empty array', async () => {
+                const getRecipesSpy = jest.spyOn( RecipeServiceModule, 'getRecipes' );
+
+                const result = await request
+                    .get( '/recipes' )
+                    .query( { userId: -1 } );
+
+                expect( getRecipesSpy ).toHaveBeenCalledTimes( 1 );
+                expect( getRecipesSpy ).toHaveBeenCalledWith( { userId: -1 } );
+
+                expect( result.status ).toBe( 200 );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( [] )
+                );
+            } );
+        } );
+    } );
+} );
+
 describe( 'POST /recipes', () => {
     describe( 'POST /recipes success flow', () => {
         let user: User;
@@ -143,6 +221,38 @@ describe( 'POST /recipes', () => {
                         message: 'This recipe has already existed.',
                         code: 'RECIPE_ALREADY_EXISTS',
                         statusCode: 400
+                    } )
+                );
+            } );
+        } );
+
+        describe( 'user does not exist', () => {
+            it( 'returns error recipe already existed', async () => {
+                const recipeInput = {
+                    userId: -1,
+                    name: 'My Recipe',
+                    instructions: 'The instructions to my recipe.'
+                };
+
+                const createRecipeSpy = jest.spyOn( RecipeServiceModule, 'createRecipe' );
+
+                const result = await request
+                    .post( '/recipes' )
+                    .send( recipeInput );
+
+                expect( createRecipeSpy ).toHaveBeenCalledTimes( 1 );
+                expect( createRecipeSpy ).toHaveBeenCalledWith( {
+                    user: { connect: { id: -1 } },
+                    name: 'My Recipe',
+                    instructions: 'The instructions to my recipe.'
+                } );
+
+                expect( result.status ).toBe( 404 );
+                expect( result.body ).toStrictEqual(
+                    expect.objectContaining( {
+                        message: 'This requested user was not found.',
+                        code: 'USER_NOT_FOUND',
+                        statusCode: 404
                     } )
                 );
             } );

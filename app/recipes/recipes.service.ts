@@ -32,6 +32,22 @@ export const getRecipe = async (
     return success( recipe );
 };
 
+export const getRecipes = async (
+    getRecipesParams: Prisma.RecipeWhereInput
+): Promise<Either<DatabaseError, Recipe[]>> => {
+    let recipes: Recipe[];
+
+    try {
+        recipes = await prismaClient.recipe.findMany( { where: { ...getRecipesParams } } );
+    } catch ( err ) {
+        const databaseError = createDatabaseError( err );
+
+        return error( databaseError );
+    }
+
+    return success( recipes );
+};
+
 export const createRecipe = async (
     recipe: Prisma.RecipeCreateInput
 ): Promise<Either<DatabaseError | RecipeAlreadyExists, Recipe>> => {
