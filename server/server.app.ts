@@ -1,6 +1,7 @@
 import express from 'express';
 import { userRouter } from './../app/users';
 import { recipeRouter } from '../app/recipes';
+import { categoryRouter } from '../app/categories';
 import { collectionRouter } from '../app/collections';
 import { recipeCategoryRouter }  from '../app/recipesCategories';
 
@@ -12,3 +13,4 @@ app.use( '/users', userRouter );
 app.use( '/recipes', recipeRouter );
 app.use( '/collections', collectionRouter );
 app.use( '/recipes-categories', recipeCategoryRouter );
+app.use( '/categories', categoryRouter );
