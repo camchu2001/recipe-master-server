@@ -14,7 +14,7 @@ afterAll( async () => {
 } );
 
 describe( 'GET /collections-recipes/:collectionRecipeId', () => {
-    describe( 'GET /collections-recipes/:collectionRecipeId success flow', () => {
+    describe( 'success flow', () => {
         let collectionRecipe: CollectionRecipe;
 
         beforeAll( async () => {
@@ -44,7 +44,7 @@ describe( 'GET /collections-recipes/:collectionRecipeId', () => {
         } );
     } );
 
-    describe( 'GET /collections-recipes/:collectionRecipeId fail flow', () => {
+    describe( 'fail flow', () => {
         describe( 'collection recipe with the provided id does not exist', () => {
             it( 'returns error collection recipe not found', async () => {
                 const getCollectionRecipeSpy = jest.spyOn( CollectionRecipeServiceModule, 'getCollectionRecipe' );
@@ -69,7 +69,7 @@ describe( 'GET /collections-recipes/:collectionRecipeId', () => {
 } );
 
 describe( 'GET /collectionRecipes by collectionId', () => {
-    describe( 'GET /collectionRecipes by collectionId success flow', () => {
+    describe( 'success flow', () => {
         let collection: Collection;
         let collectionRecipe1: CollectionRecipe;
         let collectionRecipe2: CollectionRecipe;
@@ -113,7 +113,7 @@ describe( 'GET /collectionRecipes by collectionId', () => {
         } );
     } );
 
-    describe( 'GET /collections by userId fail flow', () => {
+    describe( 'fail flow', () => {
         describe( 'there is no collection with the provided userId', () => {
             it( 'returns an empty array', async () => {
                 const getCollectionRecipesSpy = jest.spyOn( CollectionRecipeServiceModule, 'getCollectionRecipes' );
@@ -135,7 +135,7 @@ describe( 'GET /collectionRecipes by collectionId', () => {
 } );
 
 describe( 'POST /collections-recipes', () => {
-    describe( 'POST /collections-recipes success flow', () => {
+    describe( 'success flow', () => {
         let collection: Collection;
         let recipe: Recipe;
 
@@ -170,7 +170,7 @@ describe( 'POST /collections-recipes', () => {
         } );
     } );
 
-    describe( 'POST /collections-recipes fail flow', () => {
+    describe( 'fail flow', () => {
         describe( 'collection recipe has already exist', () => {
             let collectionRecipe: CollectionRecipe;
 
