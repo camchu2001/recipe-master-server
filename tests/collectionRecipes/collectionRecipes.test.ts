@@ -213,7 +213,7 @@ describe( 'POST /collections-recipes', () => {
                 recipe = await factory.getRecipe();
             } );
 
-            it( 'returns error collection already existed', async () => {
+            it( 'returns error collection does not exist', async () => {
                 const collectionRecipeInput = {
                     collectionId: -1,
                     recipeId: recipe.id
@@ -247,7 +247,7 @@ describe( 'POST /collections-recipes', () => {
                 collection = await factory.getCollection();
             } );
 
-            it( 'returns error collection already existed', async () => {
+            it( 'returns error recipe does not exist', async () => {
                 const collectionRecipeInput = {
                     collectionId: collection.id,
                     recipeId: -1
