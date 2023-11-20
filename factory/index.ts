@@ -1,10 +1,11 @@
 import {
-    Category, Collection, Recipe, User
+    Category, Collection, Recipe, RecipeCategory, User
 } from '@prisma/client';
 import { createUser } from './user';
 import { createRecipe } from './recipe';
 import { createCategory } from './category';
 import { createCollection } from './collection';
+import { createRecipeCategory } from './recipeCategory/recipeCategory';
 
 export class Factory {
     async getUser (
@@ -67,5 +68,32 @@ export class Factory {
         }
 
         return createCategoryResult.value;
+    }
+
+    async getRecipeCategory (
+        newRecipeCategory: Partial<RecipeCategory> = {}
+    ): Promise<RecipeCategory> {
+        let recipeId = newRecipeCategory.recipeId;
+        let categoryId = newRecipeCategory.categoryId;
+
+        if ( !recipeId ) {
+            const recipe = await this.getRecipe();
+            recipeId = recipe.id;
+        }
+
+        if ( !categoryId ) {
+            const category = await this.getCategory();
+            categoryId = category.id;
+        }
+
+        const createRecipeCategoryResult = await createRecipeCategory(
+            { ...newRecipeCategory, recipeId, categoryId }
+        );
+
+        if ( createRecipeCategoryResult.isError() ) {
+            throw createRecipeCategoryResult.value;
+        }
+
+        return createRecipeCategoryResult.value;
     }
 }

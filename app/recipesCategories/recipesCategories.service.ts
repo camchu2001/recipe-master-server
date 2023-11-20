@@ -7,6 +7,7 @@ import {
     Either, error, success
 } from '../../types';
 import { RecipeNotFound } from '../recipes/recipes.error';
+import { CategoryNotFound } from '../categories/categories.error';
 
 export const getRecipeCategory = async (
     recipeCategoryId: RecipeCategory['id']
@@ -60,6 +61,10 @@ export const createRecipeCategory = async (
 
         if ( databaseError.error.message.includes( 'No \'Recipe\' record(s)' ) ) {
             return error( new RecipeNotFound() );
+        }
+
+        if ( databaseError.error.message.includes( 'No \'Category\' record(s)' ) ) {
+            return error( new CategoryNotFound() );
         }
 
         return error( databaseError );
